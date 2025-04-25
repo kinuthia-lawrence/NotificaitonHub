@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -12,10 +15,21 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.NotificaitionHub"
         tools:targetApi="31">
+
+        <!--        NotificationHubListener service-->
+        <service
+            android:name=".core.service.NotificationHubListener"
+            android:exported="false"
+            android:label="Notification Hub"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.NotificaitionHub">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
