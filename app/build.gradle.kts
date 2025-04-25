@@ -9,11 +9,11 @@ plugins {
 }
 
 android {
-    namespace = "com.larrykin.notificaitionhub"
+    namespace = "com.larrykin.notificationhub"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.larrykin.notificaitionhub"
+        applicationId = "com.larrykin.notificationhub"
         minSdk = 24
         targetSdk = 35
         versionCode = 1
