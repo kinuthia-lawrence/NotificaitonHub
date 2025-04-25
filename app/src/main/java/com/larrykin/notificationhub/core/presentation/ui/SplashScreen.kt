@@ -8,6 +8,9 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -37,8 +40,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -74,6 +80,7 @@ fun SplashScreen(navController: NavController) {
             .background(darkBackground),
         contentAlignment = Alignment.Center
     ) {
+        // first splash screen
         AnimatedVisibility(visible = isVisible) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -149,30 +156,55 @@ fun SplashScreen(navController: NavController) {
                 )
             }
         }
-
-
-        AnimatedVisibility(visible = showContent) {
+        //second splash screen
+        AnimatedVisibility(
+            visible = showContent,
+            enter = fadeIn(animationSpec = tween(800)) + slideInVertically(initialOffsetY = { it / 2 }),
+            exit = fadeOut()
+        ) {
             Column(
-                modifier = Modifier.padding(32.dp),
+                modifier = Modifier
+                    .padding(horizontal = 32.dp, vertical = 64.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    text = "Welcome to NotificationHub",
-                    color = Color.White,
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.Bold
+                // Title with gradient brush
+                val gradient = Brush.linearGradient(
+                    colors = listOf(purpleColor, lightPurpleColor)
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
-
                 Text(
-                    text = "Customize your notification experience with powerful controls for every app. Set custom volumes, create profiles\n and \ntake full control of your alerts.",
-                    color = lightPurpleColor,
-                    fontSize = 20.sp,
+                    text = "Welcome to NotificationHub",
+                    style = TextStyle(
+                        brush = gradient,
+                        fontSize = 32.sp,
+                        fontWeight = FontWeight.ExtraBold
+                    ),
                     textAlign = TextAlign.Center
                 )
 
-                Spacer(modifier = Modifier.height(32.dp))
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Text(
+                    text = "Customize your notification experience with powerful controls for every app. Set custom volumes, create profiles and take full control of your alerts.",
+                    color = lightPurpleColor,
+                    fontSize = 18.sp,
+                    lineHeight = 26.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(horizontal = 8.dp)
+                )
+
+                Spacer(modifier = Modifier.height(48.dp))
+
+                // Glowing animated button
+                val pulseTransition = rememberInfiniteTransition()
+                val pulse by pulseTransition.animateFloat(
+                    initialValue = 0.95f,
+                    targetValue = 1.05f,
+                    animationSpec = infiniteRepeatable(
+                        animation = tween(1000),
+                        repeatMode = RepeatMode.Reverse
+                    )
+                )
 
                 Button(
                     onClick = {
@@ -182,17 +214,21 @@ fun SplashScreen(navController: NavController) {
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = purpleColor),
                     border = BorderStroke(2.dp, Color.White),
-                    modifier = Modifier,
-                    shape = RoundedCornerShape(25.dp)
+                    shape = RoundedCornerShape(50),
+                    modifier = Modifier
+                        .graphicsLayer(scaleX = pulse, scaleY = pulse)
+                        .shadow(8.dp, shape = RoundedCornerShape(50))
                 ) {
                     Text(
                         text = "Get Started",
                         color = Color.White,
-                        fontSize = 20.sp
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.SemiBold
                     )
                 }
             }
         }
+
     }
 }
 
