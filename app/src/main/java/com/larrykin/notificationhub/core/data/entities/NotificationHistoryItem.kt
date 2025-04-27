@@ -1,4 +1,4 @@
-package com.larrykin.notificationhub.core.data
+package com.larrykin.notificationhub.core.data.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -7,7 +7,9 @@ import androidx.room.PrimaryKey
  *
  * Entity representing a notification history item.
  * */
-@Entity(tableName = "notification_history")
+@Entity(
+    tableName = "notification_history"
+)
 data class NotificationHistoryItem(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val packageName: String,

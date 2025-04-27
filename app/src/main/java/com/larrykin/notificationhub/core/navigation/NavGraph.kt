@@ -10,9 +10,10 @@ import com.larrykin.notificationhub.core.presentation.ui.HomeScreen
 import com.larrykin.notificationhub.core.presentation.ui.ProfilesScreen
 import com.larrykin.notificationhub.core.presentation.ui.SettingsScreen
 import com.larrykin.notificationhub.core.presentation.ui.SplashScreen
+import com.larrykin.notificationhub.core.presentation.viewModels.MainViewModel
 
 @Composable
-fun NavGraph(navController: NavHostController) {
+fun NavGraph(navController: NavHostController, viewModel: MainViewModel) {
     NavHost(
         navController = navController,
         startDestination = "splash"
@@ -21,7 +22,7 @@ fun NavGraph(navController: NavHostController) {
             SplashScreen(navController)
         }
         composable(route = "home") {
-            HomeScreen(navController)
+            HomeScreen(navController,viewModel)
         }
         composable(route = "profiles") {
             ProfilesScreen(navController)

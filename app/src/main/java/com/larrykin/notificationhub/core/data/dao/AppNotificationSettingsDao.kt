@@ -1,9 +1,10 @@
-package com.larrykin.notificationhub.core.data
+package com.larrykin.notificationhub.core.data.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.larrykin.notificationhub.core.data.entities.AppNotificationSettings
 import kotlinx.coroutines.flow.Flow
 
 @Dao

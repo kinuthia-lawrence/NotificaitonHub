@@ -1,7 +1,11 @@
-package com.larrykin.notificationhub.core.data
+package com.larrykin.notificationhub.core.data.repository
 
 import android.app.Notification
-import com.larrykin.notificationhub.core.domain.INotificationRepository
+import com.larrykin.notificationhub.core.data.dao.AppNotificationSettingsDao
+import com.larrykin.notificationhub.core.data.dao.NotificationHistoryItemDao
+import com.larrykin.notificationhub.core.data.entities.AppNotificationSettings
+import com.larrykin.notificationhub.core.data.entities.NotificationHistoryItem
+import com.larrykin.notificationhub.core.domain.repository.INotificationRepository
 import kotlinx.coroutines.flow.Flow
 import java.util.Date
 

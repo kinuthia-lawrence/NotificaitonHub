@@ -3,8 +3,8 @@ package com.larrykin.notificationhub.core.service
 import android.app.Notification
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
-import com.larrykin.notificationhub.core.data.AppNotificationSettings
-import com.larrykin.notificationhub.core.domain.INotificationRepository
+import com.larrykin.notificationhub.core.data.entities.AppNotificationSettings
+import com.larrykin.notificationhub.core.domain.repository.INotificationRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

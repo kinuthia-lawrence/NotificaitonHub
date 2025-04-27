@@ -3,9 +3,9 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     // Kotlin Symbol Processing
-    id("com.google.devtools.ksp")
+    alias(libs.plugins.kspCompose)
     // apply room plugin
-    id("androidx.room")
+    alias(libs.plugins.room)
 }
 
 android {
@@ -68,14 +68,16 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
 
     //room
-    implementation("androidx.room:room-runtime:2.7.1")
+    implementation(libs.androidx.room.runtime)
+
     //ksp
-    ksp("androidx.room:room-compiler:2.7.1")
+    ksp(libs.androidx.room.compiler)
 
 //    koin - for dependency injection
     implementation(project.dependencies.platform(libs.koin.bom))
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
     implementation(libs.koin.androidx.navigation)
+//    testImplementation(libs.koin.test)
 
 }

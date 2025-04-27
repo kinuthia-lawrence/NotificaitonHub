@@ -3,7 +3,6 @@ package com.larrykin.notificationhub
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
-import android.provider.Settings.Secure
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -37,9 +36,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -54,23 +52,29 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.compose.rememberNavController
-import com.larrykin.notificationhub.core.data.NotificationRepository
-import com.larrykin.notificationhub.core.domain.INotificationRepository
 import com.larrykin.notificationhub.core.navigation.NavGraph
+import com.larrykin.notificationhub.core.presentation.viewModels.MainViewModel
 import com.larrykin.notificationhub.ui.theme.NotificationHubTheme
 import com.larrykin.notificationhub.ui.theme.darkPurpleColor
 import com.larrykin.notificationhub.ui.theme.lightPurpleColor
 import com.larrykin.notificationhub.ui.theme.purpleColor
 import kotlinx.coroutines.delay
-import org.koin.core.context.GlobalContext.startKoin
-import org.koin.dsl.module
+import org.koin.android.ext.android.inject
+import org.koin.android.scope.AndroidScopeComponent
+import org.koin.androidx.scope.activityScope
+import org.koin.androidx.viewmodel.ext.android.getViewModel
+import org.koin.core.qualifier.named
+import org.koin.core.scope.Scope
 
-class MainActivity : ComponentActivity() {
+class MainActivity : ComponentActivity(), AndroidScopeComponent {
+
+    override val scope: Scope by activityScope()
+    private val hello by inject<String>(named("hello"))
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        startKoin {
-            modules(appModule)
-        }
+        val viewModel = getViewModel<MainViewModel>()
+        println(hello)
         enableEdgeToEdge()
         setContent {
             NotificationHubTheme {
@@ -78,11 +82,10 @@ class MainActivity : ComponentActivity() {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                 ) {
-                    NavGraph(navController = navController)
-                    //check if the notification listener is enabled
-
+                    NavGraph(navController = navController, viewModel)
+                    // Use the viewModel to check notification access
                     CheckNotificationAccess(
-                        isNotificationListenerEnabled = { isNotificationListenerEnabled(this@MainActivity) },
+                        viewModel = viewModel,
                         startActivity = { intent -> startActivity(intent) }
                     )
                 }
@@ -90,43 +93,35 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-
-    val appModule = module {
-        single<INotificationRepository> { NotificationRepository(get(), get()) }
-    }
-
-
     @Composable
     fun CheckNotificationAccess(
-        isNotificationListenerEnabled: () -> Boolean,
+        viewModel: MainViewModel,
         startActivity: (Intent) -> Unit
     ) {
-        val hasNotificationAccess = remember {
-            mutableStateOf(isNotificationListenerEnabled())
-        }
-        val show = remember { mutableStateOf(false) }
-        val checkingForPermission = remember { mutableStateOf(false) }
+        // Collect state from ViewModel
+        val showDialog by viewModel.showPermissionDialog.collectAsState()
+        val hasAccess by viewModel.hasNotificationAccess.collectAsState()
+        val checkingPermission by viewModel.checkingForPermission.collectAsState()
 
+        // Check notification permission on launch
         LaunchedEffect(Unit) {
-            delay(12000)
-            show.value = true
+            viewModel.checkNotificationPermission(this@MainActivity)
         }
 
-        //check for permission updates after user returns from settings
-        LaunchedEffect(checkingForPermission.value) {
-            if (checkingForPermission.value) {
-                while (!hasNotificationAccess.value) {
+        // Monitor permission state when checking
+        LaunchedEffect(checkingPermission) {
+            if (checkingPermission) {
+                while (!hasAccess) {
                     delay(1000)
-                    hasNotificationAccess.value = isNotificationListenerEnabled()
+                    viewModel.checkNotificationPermission(this@MainActivity)
                 }
-                checkingForPermission.value = false
+                viewModel.stopCheckingPermission()
             }
         }
 
-        // Check if the notification listener is enabled
+        // Show permission dialog if needed
         AnimatedVisibility(
-            visible = !hasNotificationAccess.value && show.value,
-//            visible = true,
+            visible = !hasAccess && showDialog,
             enter = fadeIn() + expandVertically(),
             exit = fadeOut() + shrinkVertically()
         ) {
@@ -156,12 +151,16 @@ class MainActivity : ComponentActivity() {
                             .padding(horizontal = 24.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+                        // Animation and text content remains unchanged
                         val infiniteTransition = rememberInfiniteTransition()
                         val scale by infiniteTransition.animateFloat(
                             initialValue = 1f,
                             targetValue = 1.2f,
                             animationSpec = infiniteRepeatable(
-                                animation = tween(durationMillis = 500, easing = FastOutSlowInEasing),
+                                animation = tween(
+                                    durationMillis = 500,
+                                    easing = FastOutSlowInEasing
+                                ),
                                 repeatMode = RepeatMode.Reverse
                             )
                         )
@@ -173,6 +172,7 @@ class MainActivity : ComponentActivity() {
                                 .graphicsLayer(scaleX = scale, scaleY = scale),
                             contentAlignment = Alignment.Center
                         ) {
+                            // Icon content unchanged
                             Box(
                                 modifier = Modifier
                                     .size(80.dp)
@@ -220,7 +220,7 @@ class MainActivity : ComponentActivity() {
                         Button(
                             onClick = {
                                 startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
-                                checkingForPermission.value = true
+                                viewModel.startCheckingPermission()
                             },
                             colors = ButtonDefaults.buttonColors(containerColor = purpleColor),
                             modifier = Modifier
@@ -235,20 +235,44 @@ class MainActivity : ComponentActivity() {
                                 color = Color.White
                             )
                         }
-                    }
 
+                        // Add button to dismiss dialog without granting permission
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Button(
+                            onClick = {
+                                viewModel.dismissPermissionDialog()
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.Transparent
+                            ),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                text = "Not Now",
+                                fontSize = 14.sp,
+                                color = lightPurpleColor,
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
+                    }
                 }
             }
         }
     }
 
-
-    fun isNotificationListenerEnabled(context: android.content.Context): Boolean {
-        val packageName = context.packageName
-        val flat = Secure.getString(context.contentResolver, "enabled_notification_listeners")
-        return flat?.contains(packageName) == true
+    @Preview
+    @Composable
+    fun PreviewCheckNotificationAccess() {
+        NotificationHubTheme {
+            // Preview the CheckNotificationAccess composable
+            CheckNotificationAccess(
+                viewModel = MainViewModel(),
+                startActivity = {}
+            )
+        }
     }
 }
+
 
 @Preview
 @Composable
@@ -258,7 +282,7 @@ fun PreviewMain() {
         Surface(
             modifier = Modifier.fillMaxSize(),
         ) {
-            NavGraph(navController = navController)
+            NavGraph(navController = navController, TODO())
         }
     }
 }

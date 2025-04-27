@@ -4,8 +4,8 @@ plugins {
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.kotlin.compose) apply false
     // Kotlin Symbol Processing
-    id("com.google.devtools.ksp") version "2.0.21-1.0.27" apply false
+    alias(libs.plugins.kspCompose) apply false
     // apply room plugin
-    id("androidx.room") version "2.7.1" apply false
+    alias(libs.plugins.room) apply false
 
 }
