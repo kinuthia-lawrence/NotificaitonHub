@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.larrykin.notificationhub.core.presentation.ui.AppDetailScreen
+import com.larrykin.notificationhub.core.presentation.ui.DashboardScreen
 import com.larrykin.notificationhub.core.presentation.ui.HistoryScreen
 import com.larrykin.notificationhub.core.presentation.ui.HomeScreen
 import com.larrykin.notificationhub.core.presentation.ui.ProfilesScreen
@@ -20,6 +21,9 @@ fun NavGraph(navController: NavHostController, viewModel: MainViewModel) {
     ) {
         composable(route = "splash") {
             SplashScreen(navController)
+        }
+        composable(route = "dashboard") {
+            DashboardScreen(viewModel)
         }
         composable(route = "home") {
             HomeScreen(navController,viewModel)
@@ -41,3 +45,4 @@ fun NavGraph(navController: NavHostController, viewModel: MainViewModel) {
         }
     }
 }
+

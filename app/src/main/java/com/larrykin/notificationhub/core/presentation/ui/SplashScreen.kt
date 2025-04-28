@@ -69,7 +69,7 @@ fun SplashScreen(navController: NavController) {
         isVisible = false
         showContent = true
         delay(10000) // Delay before navigating to the next screen
-        navController.navigate("home") {
+        navController.navigate("dashboard") {
             popUpTo("splash") { inclusive = true }
         }
     }

@@ -8,6 +8,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.larrykin.notificationhub.core.data.database.AppDatabase
 import com.larrykin.notificationhub.core.data.repository.NotificationRepository
 import com.larrykin.notificationhub.core.domain.repository.INotificationRepository
+import com.larrykin.notificationhub.core.presentation.viewModels.AppDetailViewModel
 import com.larrykin.notificationhub.core.presentation.viewModels.MainViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -86,6 +87,8 @@ val appModule = module {
      *
      * */
     viewModel {
-        MainViewModel()
+        MainViewModel(),
+        AppDetailViewModel()
     }
+
 }

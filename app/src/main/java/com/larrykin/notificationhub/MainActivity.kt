@@ -82,7 +82,7 @@ class MainActivity : ComponentActivity(), AndroidScopeComponent {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                 ) {
-                    NavGraph(navController = navController, viewModel)
+                    NavGraph(navController = navController, viewModel = viewModel)
                     // Use the viewModel to check notification access
                     CheckNotificationAccess(
                         viewModel = viewModel,
@@ -260,6 +260,8 @@ class MainActivity : ComponentActivity(), AndroidScopeComponent {
         }
     }
 
+    //? preview is not able to construct view model references that have a constructor.
+    //? Create a root composable and have the actual screen composable   inside it( the actual screen composable takes in the actual values as parameters instead of the viewmodel
     @Preview
     @Composable
     fun PreviewCheckNotificationAccess() {
