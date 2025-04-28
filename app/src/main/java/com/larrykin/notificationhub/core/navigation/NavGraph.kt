@@ -23,16 +23,7 @@ fun NavGraph(navController: NavHostController, viewModel: MainViewModel) {
             SplashScreen(navController)
         }
         composable(route = "dashboard") {
-            DashboardScreen(viewModel)
-        }
-        composable(route = "home") {
-            HomeScreen(navController,viewModel)
-        }
-        composable(route = "profiles") {
-            ProfilesScreen(navController)
-        }
-        composable(route = "history") {
-            HistoryScreen(navController)
+            DashboardScreen(navController, viewModel)
         }
         composable(route = "settings") {
             SettingsScreen(navController)

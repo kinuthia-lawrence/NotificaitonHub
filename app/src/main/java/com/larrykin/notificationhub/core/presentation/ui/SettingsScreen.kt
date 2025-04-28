@@ -6,6 +6,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavController
 import com.larrykin.notificationhub.core.presentation.viewModels.MainViewModel
 
@@ -36,8 +38,8 @@ fun AppSettings(viewModel: MainViewModel, startActivity: (Intent) -> Unit) {
 fun SettingsItem(
     title: String,
     description: String,
-    icon: Notifications,
-    enabled: not,
+    icon: ImageVector,
+    enabled: Boolean,
     onClick: () -> Unit
 ) {
     TODO("Not yet implemented")

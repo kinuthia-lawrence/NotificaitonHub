@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.larrykin.notificationhub.core.presentation.viewModels.AppDetailViewModel
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
@@ -46,7 +47,7 @@ fun AppDetailScreen(packageName: String, navController: NavController) {
         // Notification Settings
         SwitchSetting(
             title = "Enable Notifications",
-            checked = appInfo.notificationEnabled,
+            checked = appInfo.notificationsEnabled,
             onCheckedChange = { viewModel.setNotificationEnabled(it) }
         )
 

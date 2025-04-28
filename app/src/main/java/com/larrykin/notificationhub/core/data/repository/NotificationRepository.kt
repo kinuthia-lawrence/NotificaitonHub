@@ -48,6 +48,10 @@ class NotificationRepository(
         return historyDao.getAllHistory();
     }
 
+    override fun activateProfile(profileId: Long) {
+        TODO("Implement functionality to activate a profile")
+    }
+
     private fun getAppName(packageName: String): String {
         return packageName; //TODO("Implement functionality to get the application name from the package name")
     }

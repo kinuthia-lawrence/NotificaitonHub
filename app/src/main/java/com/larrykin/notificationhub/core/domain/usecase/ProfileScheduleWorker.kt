@@ -1,7 +1,6 @@
 package com.larrykin.notificationhub.core.domain.usecase
 
 import android.content.Context
-import android.icu.util.TimeUnit
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.Worker
@@ -9,6 +8,7 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.larrykin.notificationhub.core.domain.repository.INotificationRepository
 import org.koin.java.KoinJavaComponent
+import java.util.concurrent.TimeUnit
 
 class ProfileScheduleWorker(
     context: Context,

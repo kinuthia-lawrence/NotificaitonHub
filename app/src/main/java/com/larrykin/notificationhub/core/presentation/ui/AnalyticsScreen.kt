@@ -1,10 +1,8 @@
 package com.larrykin.notificationhub.core.presentation.ui
 
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 
 @Composable
-fun ProfilesScreen(navController: NavController) {
-    Text(text = "Profiles Screen")
+fun AnalyticsScreen(navController: NavController) {
 }

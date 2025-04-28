@@ -1,15 +1,18 @@
 package com.larrykin.notificationhub.core.presentation.viewModels
 
-import android.net.Uri
+import androidx.core.net.toUri
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.larrykin.notificationhub.core.domain.model.AppInfoDetails
 import com.larrykin.notificationhub.core.domain.repository.INotificationRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 class AppDetailViewModel(
     private val packageName: String,
     private val repository: INotificationRepository
-) {
+) : ViewModel() {
     private val _appInfo = MutableStateFlow(AppInfoDetails())
     val appInfo: StateFlow<AppInfoDetails> = _appInfo
 
@@ -21,10 +24,10 @@ class AppDetailViewModel(
         viewModelScope.launch {
             repository.getAppSettings(packageName)?.let { settings ->
                 _appInfo.value = AppInfoDetails(
-                    name = settings.appName ?: packageName,
-                    iconUri = Uri.parse("android.resource:// $packageName/mipmap/ic_launcher"),
-                    notificationsEnabled = settings.enabled,
-                    soundEnabled = settings.soundEnabled
+                    name = settings.appName,
+                    iconUri = "android.resource://$packageName/mipmap/ic_launcher".toUri(),
+                    notificationsEnabled = settings.isEnabled,
+                    soundEnabled = settings.isEnabled // TODO: add sound enabled to the entity
                 )
 
             }
@@ -33,15 +36,21 @@ class AppDetailViewModel(
 
     fun setNotificationEnabled(enabled: Boolean) {
         viewModelScope.launch {
-            repository.updateAppSettings(packageName, enabled = enabled)
-            _appInfo.value = _appInfo.value.copy(setNotificationEnabled = enabled)
+            repository.getAppSettings(packageName)?.let { currentSettings ->
+                val updatedSettings = currentSettings.copy(isEnabled = enabled)
+                repository.saveAppSettings(updatedSettings)
+                _appInfo.value = _appInfo.value.copy(notificationsEnabled = enabled)
+            }
         }
     }
 
     fun setSoundEnabled(enabled: Boolean) {
         viewModelScope.launch {
-            repository.updateAppSettings(packageName, soundEnabled = enabled)
-            _appInfo.value = _appInfo.value.copy(soundEnabled = enabled)
+            repository.getAppSettings(packageName)?.let { currentSettings ->
+                val updatedSettings = currentSettings.copy(isEnabled = enabled)
+                repository.saveAppSettings(updatedSettings)
+                _appInfo.value = _appInfo.value.copy(soundEnabled = enabled)
+            }
         }
     }
 }

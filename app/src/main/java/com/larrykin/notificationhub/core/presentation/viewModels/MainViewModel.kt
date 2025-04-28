@@ -1,6 +1,5 @@
 package com.larrykin.notificationhub.core.presentation.viewModels
 
-import android.adservices.ondevicepersonalization.AppInfo
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -9,6 +8,7 @@ import android.provider.Settings
 import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.larrykin.notificationhub.core.domain.model.AppInfoDetails
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -31,8 +31,8 @@ class MainViewModel : ViewModel() {
     val checkingForPermission: StateFlow<Boolean> = _checkingForPermission
 
     // StateFlow to manage installed apps
-    private val _installedApps = MutableStateFlow<List<AppInfo>>(emptyList())
-    val installedApps: StateFlow<List<AppInfo>> = _installedApps
+    private val _installedApps = MutableStateFlow<List<AppInfoDetails>>(emptyList())
+    val installedApps: StateFlow<List<AppInfoDetails>> = _installedApps
 
     // StateFlow to manage loading
     private val _loadingApps = MutableStateFlow(false)
@@ -55,9 +55,18 @@ class MainViewModel : ViewModel() {
     private fun loadInstalledApps() {
         viewModelScope.launch {
             _loadingApps.value = true
-            // TODO: implement fetchig installed apps
+            // TODO: implement fetching installed apps
 //            _installedApps.value = repository.getInstalledApps()
-            _installedApps.value = emptyList()
+            _installedApps.value = listOf(
+                AppInfoDetails(
+                    name = "Sample App 1",
+                    notificationsEnabled = true
+                ),
+                AppInfoDetails(
+                    name = "Sample App 2",
+                    notificationsEnabled = false
+                )
+            )
             _loadingApps.value = false
 
         }

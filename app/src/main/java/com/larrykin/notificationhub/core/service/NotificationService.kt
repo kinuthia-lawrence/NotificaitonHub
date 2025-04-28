@@ -10,7 +10,6 @@ import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import com.larrykin.notificationhub.MainActivity
-import com.larrykin.notificationhub.R
 
 class NotificationService : Service() {
     companion object {

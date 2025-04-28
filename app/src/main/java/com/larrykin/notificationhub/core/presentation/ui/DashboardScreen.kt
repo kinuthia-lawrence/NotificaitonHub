@@ -5,47 +5,34 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.larrykin.notificationhub.core.navigation.DashboardNavGraph
 import com.larrykin.notificationhub.core.presentation.viewModels.MainViewModel
 
 @Composable
-fun DashboardScreen(viewModel: MainViewModel) {
-    val navController = rememberNavController()
+fun DashboardScreen(
+    mainNavController: NavHostController,
+    mainViewModel: MainViewModel
+
+) {
+    val nestedNavController = rememberNavController()
 
     Scaffold(
         bottomBar = {
-            BottomNavigation(navController)
+            BottomNavigation(nestedNavController)
         }
     )
     { paddingValues ->
-        Box(modifier = Modifier.padding(paddingValues))
-        NavHost(
-            navController = navController,
-            startDestination = "home"
-        ) {
-            composable("home") {
-                HomeScreen(navController, viewModel)
-            }
-            composable("profiles") {
-                ProfilesScreen(navController)
-            }
-            composable("history") {
-                HistoryScreen(navController)
-            }
-            composable("settings") {
-                SettingsScreen(navController)
-            }
-            composable("appDetails/{packageName}") { backStackEntry ->
-                val packageName = backStackEntry.arguments?.getString("packageName")
-                packageName?.let {
-                    AppDetailScreen(packageName, navController)
-                }
-            }
-
+        Box(modifier = Modifier.padding(paddingValues)) {
+            DashboardNavGraph(
+                nestedNavController = nestedNavController,
+                mainNavController = mainNavController,
+                mainViewModel = mainViewModel
+            )
         }
-
     }
 }
 

@@ -29,14 +29,18 @@ import org.koin.dsl.module
  */
 val appModule = module {
 
+    //? MIGRATIONS
     /**
      * Migrations for Room database.
      * */
-    val MIGRATION_1_2 = object : Migration(1, 2) {
+/*    val MIGRATION_1_2 = object : Migration(1, 2) {
         override fun migrate(db: SupportSQLiteDatabase) {
-//                 db.execSQL("ALTER TABLE notification_profiles ADD COLUMN isEnabled INTEGER NOT NULL DEFAULT 1")
+                 db.execSQL("ALTER TABLE notification_profiles ADD COLUMN isEnabled INTEGER NOT NULL DEFAULT 1")
         }
-    }
+    }*/
+
+
+    //? DATABASE
 
     /**
      * Provides a singleton instance of [AppDatabase] using Room.
@@ -60,6 +64,8 @@ val appModule = module {
     }
 
 
+    //? DAOs
+
     /**
      * Provides a singleton instance of AppNotificationSettingsDao.
      *
@@ -74,6 +80,9 @@ val appModule = module {
      */
     single { get<AppDatabase>().notificationHistoryDao() }
 
+
+    //? REPOSITORIES
+
     /**
      * Provides a singleton implementation of [INotificationRepository].
      *
@@ -82,13 +91,26 @@ val appModule = module {
      */
     single<INotificationRepository> { NotificationRepository(get(), get()) }
 
+
+    //? VIEW MODELS
+
     /**
-     *
-     *
-     * */
+     * - MainViewModel: Handles app-wide state and notification permissions
+     */
     viewModel {
-        MainViewModel(),
-        AppDetailViewModel()
+        MainViewModel()
+    }
+
+    /**
+     * - AppDetailViewModel: Manages settings for individual apps
+     * @param packageName: The package name of the app whose settings are being managed.
+     * @param repository: The repository used to access app settings and notifications.
+     */
+    viewModel { parameters ->
+        AppDetailViewModel(
+            packageName = parameters.get(),
+            repository = get()
+        )
     }
 
 }
