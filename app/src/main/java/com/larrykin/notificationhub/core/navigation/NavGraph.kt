@@ -2,6 +2,11 @@ package com.larrykin.notificationhub.core.navigation
 
 import android.os.Build
 import androidx.annotation.RequiresExtension
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -22,10 +27,24 @@ fun NavGraph(navController: NavHostController, viewModel: MainViewModel) {
         navController = navController,
         startDestination = "splash"
     ) {
-        composable(route = "splash") {
-            SplashScreen(navController)
+        composable(
+            route = "splash",
+            exitTransition = {
+                slideOutHorizontally(
+                    targetOffsetX = { -it },
+                    animationSpec = tween(300)
+                ) + fadeOut(animationSpec = tween(300))
+            }
+        ) {
+            SplashScreen(navController, viewModel)
         }
-        composable(route = "dashboard") {
+
+        composable(route = "dashboard", enterTransition = {
+            slideInHorizontally(
+                initialOffsetX = { it },
+                animationSpec = tween(300)
+            ) + fadeIn(animationSpec = tween(300))
+        }) {
             DashboardScreen(navController, viewModel)
         }
         composable(route = "settings") {

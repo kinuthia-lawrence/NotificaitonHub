@@ -33,6 +33,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,23 +53,33 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.larrykin.notificationhub.core.presentation.viewModels.MainViewModel
 import com.larrykin.notificationhub.ui.theme.darkBackground
 import com.larrykin.notificationhub.ui.theme.lightPurpleColor
 import com.larrykin.notificationhub.ui.theme.purpleColor
 import kotlinx.coroutines.delay
 
 @Composable
-fun SplashScreen(navController: NavController) {
+fun SplashScreen(navController: NavController, viewModel: MainViewModel) {
     var isVisible by remember { mutableStateOf(true) }
     var showContent by remember { mutableStateOf(false) }
+
+    val hasAccess by viewModel.hasNotificationAccess.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.checkNotificationPermission()
+    }
 
 
 
     LaunchedEffect(Unit) {
         delay(5000) // Splash screen duration
         isVisible = false
-        showContent = true
-        delay(10000) // Delay before navigating to the next screen
+        if (!hasAccess) {
+            // No permission - show second splash screen
+            showContent = true
+            delay(10000)
+        }
         navController.navigate("dashboard") {
             popUpTo("splash") { inclusive = true }
         }
@@ -158,7 +169,7 @@ fun SplashScreen(navController: NavController) {
         }
         //second splash screen
         AnimatedVisibility(
-            visible = showContent,
+            visible = showContent && !hasAccess,
             enter = fadeIn(animationSpec = tween(800)) + slideInVertically(initialOffsetY = { it / 2 }),
             exit = fadeOut()
         ) {
@@ -237,6 +248,7 @@ fun SplashScreen(navController: NavController) {
 @Composable
 fun PreviewSplashScreen() {
     val navController = rememberNavController()
-    SplashScreen(navController)
+    val viewModel = MainViewModel(TODO())
+    SplashScreen(navController, viewModel)
 
 }
