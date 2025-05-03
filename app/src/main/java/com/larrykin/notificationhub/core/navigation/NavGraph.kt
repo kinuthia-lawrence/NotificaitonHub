@@ -1,5 +1,7 @@
 package com.larrykin.notificationhub.core.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresExtension
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -13,6 +15,7 @@ import com.larrykin.notificationhub.core.presentation.ui.SettingsScreen
 import com.larrykin.notificationhub.core.presentation.ui.SplashScreen
 import com.larrykin.notificationhub.core.presentation.viewModels.MainViewModel
 
+@RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)
 @Composable
 fun NavGraph(navController: NavHostController, viewModel: MainViewModel) {
     NavHost(

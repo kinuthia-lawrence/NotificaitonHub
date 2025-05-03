@@ -3,13 +3,12 @@ package com.larrykin.notificationhub.core.presentation.viewModels
 import android.app.Application
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.PowerManager
 import android.provider.Settings
 import android.util.Log
 import androidx.core.content.edit
+import androidx.core.net.toUri
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.larrykin.notificationhub.core.domain.model.AppInfoDetails
 import com.larrykin.notificationhub.core.domain.repository.INotificationRepository
@@ -19,7 +18,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import androidx.core.net.toUri
 
 class MainViewModel(application: Application) : KoinComponent,
     AndroidViewModel(application) {
@@ -47,6 +45,10 @@ class MainViewModel(application: Application) : KoinComponent,
     private val _loadingApps = MutableStateFlow(false)
     val loadingApps: StateFlow<Boolean> = _loadingApps
 
+    //StateFlow for search functionality
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _searchQuery
+
     /**
      * initializes the ViewModel and starts checking for notification access permission.
      * */
@@ -62,6 +64,10 @@ class MainViewModel(application: Application) : KoinComponent,
         }
     }
 
+    fun onSearchQueryChanged(query: String) {
+        _searchQuery.value = query
+    }
+
     private fun loadInstalledApps() {
         viewModelScope.launch {
             _loadingApps.value = true
@@ -69,7 +75,7 @@ class MainViewModel(application: Application) : KoinComponent,
             repository.getInstalledApps(getApplication<Application>().packageManager)
                 .collect { appDetails ->
                     _installedApps.value = appDetails
-                    Log.d("MainViewModel", "Installed apps: $appDetails")
+//                    Log.d("MainViewModel", "Installed apps: $appDetails")
                     _loadingApps.value = false
                 }
         }

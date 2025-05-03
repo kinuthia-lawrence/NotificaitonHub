@@ -1,11 +1,13 @@
 package com.larrykin.notificationhub
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresExtension
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
@@ -71,6 +73,7 @@ class MainActivity : ComponentActivity(), AndroidScopeComponent {
     override val scope: Scope by activityScope()
     private val hello by inject<String>(named("hello"))
 
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val viewModel = getViewModel<MainViewModel>()
@@ -276,6 +279,7 @@ class MainActivity : ComponentActivity(), AndroidScopeComponent {
 }
 
 
+@RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)
 @Preview
 @Composable
 fun PreviewMain() {

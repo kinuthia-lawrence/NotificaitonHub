@@ -1,5 +1,7 @@
 package com.larrykin.notificationhub.core.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresExtension
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -10,6 +12,7 @@ import com.larrykin.notificationhub.core.presentation.ui.HomeScreen
 import com.larrykin.notificationhub.core.presentation.ui.ProfilesScreen
 import com.larrykin.notificationhub.core.presentation.viewModels.MainViewModel
 
+@RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)
 @Composable
 fun DashboardNavGraph(
     nestedNavController: NavHostController,
