@@ -66,7 +66,13 @@ fun HomeScreen(navController: NavController, viewModel: MainViewModel) {
         )
 
         // permission banner
-        PermissionBanner(viewModel)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+        ) {
+            PermissionBanner(viewModel)
+        }
         // check if the app has notification access permission
         if (loading) {
             LoadingIndicator()
