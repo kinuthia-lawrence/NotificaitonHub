@@ -208,7 +208,7 @@ fun SplashScreen(navController: NavController) {
 
                 Button(
                     onClick = {
-                        navController.navigate("home") {
+                        navController.navigate("dashboard") {
                             popUpTo("splash") { inclusive = true }
                         }
                     },

@@ -28,7 +28,7 @@ fun HomeScreen(navController: NavController, viewModel: MainViewModel) {
     Column {
         PermissionBanner(viewModel)
         if (loading) {
-            LoadingIdicator()
+            LoadingIndicator()
         } else {
             LazyColumn {
                 items(installedApps) { app ->
@@ -46,7 +46,7 @@ fun HomeScreen(navController: NavController, viewModel: MainViewModel) {
 }
 
 @Composable
-fun LoadingIdicator() {
+fun LoadingIndicator() {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center

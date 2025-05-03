@@ -9,10 +9,14 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.larrykin.notificationhub.R
 
 @Composable
 fun BottomNavigation(nestedNavController: NavController) {
@@ -28,7 +32,7 @@ fun BottomNavigation(nestedNavController: NavController) {
                 }
             },
             icon = { Icon(Icons.Filled.Home, null) },
-            label = { Text("Home") }
+            label = { Text(text = "Home", fontSize = 16.sp, fontWeight = FontWeight.SemiBold) }
         )
 
         NavigationBarItem(
@@ -41,7 +45,7 @@ fun BottomNavigation(nestedNavController: NavController) {
                 }
             },
             icon = { Icon(Icons.AutoMirrored.Filled.List, null) },
-            label = { Text("Profiles") }
+            label = { Text(text = "Profiles", fontSize = 16.sp, fontWeight = FontWeight.SemiBold) }
         )
 
         NavigationBarItem(
@@ -53,8 +57,9 @@ fun BottomNavigation(nestedNavController: NavController) {
                     restoreState = true
                 }
             },
-            icon = { Icon(Icons.Filled.Info, null) },
-            label = { Text("History") }
+            icon = { Icon(painter = painterResource(id = R.drawable.baseline_history_24), null) },
+//            icon = { Icon(imageVector = Icons.Default.History, null) }, //Using material icon extended
+            label = { Text(text = "History", fontSize = 16.sp, fontWeight = FontWeight.SemiBold) }
         )
 
         NavigationBarItem(
@@ -67,7 +72,9 @@ fun BottomNavigation(nestedNavController: NavController) {
                 }
             },
             icon = { Icon(Icons.Filled.Info, null) },
-            label = { Text("Analytics") }
+            label = {
+                Text(text = "Analytics", fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+            }
         )
     }
 

@@ -105,7 +105,7 @@ class MainActivity : ComponentActivity(), AndroidScopeComponent {
 
         // Check notification permission on launch
         LaunchedEffect(Unit) {
-            viewModel.checkNotificationPermission(this@MainActivity)
+            viewModel.checkNotificationPermission()
         }
 
         // Monitor permission state when checking
@@ -113,7 +113,7 @@ class MainActivity : ComponentActivity(), AndroidScopeComponent {
             if (checkingPermission) {
                 while (!hasAccess) {
                     delay(1000)
-                    viewModel.checkNotificationPermission(this@MainActivity)
+                    viewModel.checkNotificationPermission()
                 }
                 viewModel.stopCheckingPermission()
             }
@@ -268,7 +268,7 @@ class MainActivity : ComponentActivity(), AndroidScopeComponent {
         NotificationHubTheme {
             // Preview the CheckNotificationAccess composable
             CheckNotificationAccess(
-                viewModel = MainViewModel(),
+                viewModel = MainViewModel(TODO()),
                 startActivity = {}
             )
         }

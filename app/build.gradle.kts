@@ -86,4 +86,7 @@ dependencies {
     // coil compose
     implementation(libs.coil.kt.coil.compose)
 
+    //extended Icons
+//    implementation(libs.androidx.material.icons.extended) // this library is large(about 31MB) so we can use it only when we need a lot of Icons
+
 }

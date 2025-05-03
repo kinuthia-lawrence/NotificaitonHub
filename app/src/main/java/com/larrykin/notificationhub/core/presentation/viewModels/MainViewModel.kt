@@ -1,22 +1,31 @@
 package com.larrykin.notificationhub.core.presentation.viewModels
 
+import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.PowerManager
 import android.provider.Settings
+import android.util.Log
 import androidx.core.content.edit
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.larrykin.notificationhub.core.domain.model.AppInfoDetails
+import com.larrykin.notificationhub.core.domain.repository.INotificationRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
+import androidx.core.net.toUri
 
-class MainViewModel : ViewModel() {
+class MainViewModel(application: Application) : KoinComponent,
+    AndroidViewModel(application) {
 
-    private var applicationContext: Context? = null
+    private val repository: INotificationRepository by inject()
+
 
     // StateFlow to manage the visibility of the permission dialog
     private val _showPermissionDialog = MutableStateFlow(false)
@@ -44,6 +53,7 @@ class MainViewModel : ViewModel() {
     init {
         viewModelScope.launch {
             loadInstalledApps()
+            Log.d("MainViewModel", "Installed apps loaded")
         }
         // Show permission dialog after delay
         viewModelScope.launch {
@@ -55,27 +65,19 @@ class MainViewModel : ViewModel() {
     private fun loadInstalledApps() {
         viewModelScope.launch {
             _loadingApps.value = true
-            // TODO: implement fetching installed apps
-//            _installedApps.value = repository.getInstalledApps()
-            _installedApps.value = listOf(
-                AppInfoDetails(
-                    name = "Sample App 1",
-                    notificationsEnabled = true
-                ),
-                AppInfoDetails(
-                    name = "Sample App 2",
-                    notificationsEnabled = false
-                )
-            )
-            _loadingApps.value = false
 
+            repository.getInstalledApps(getApplication<Application>().packageManager)
+                .collect { appDetails ->
+                    _installedApps.value = appDetails
+                    Log.d("MainViewModel", "Installed apps: $appDetails")
+                    _loadingApps.value = false
+                }
         }
     }
 
     // Check if the app has notification access permission
-    fun checkNotificationPermission(context: Context) {
-        applicationContext = context.applicationContext
-        _hasNotificationAccess.value = isNotificationListenerEnabled(context)
+    fun checkNotificationPermission() {
+        _hasNotificationAccess.value = isNotificationListenerEnabled()
     }
 
     // Check if the app has notification access permission
@@ -100,7 +102,8 @@ class MainViewModel : ViewModel() {
     }
 
     // Check if the app has notification access permission
-    private fun isNotificationListenerEnabled(context: Context): Boolean {
+    private fun isNotificationListenerEnabled(): Boolean {
+        val context = getApplication<Application>()
         val packageName = context.packageName
         val flat =
             Settings.Secure.getString(context.contentResolver, "enabled_notification_listeners")
@@ -132,20 +135,20 @@ class MainViewModel : ViewModel() {
     // Get the dismissal count from SharedPreferences or DataStore
     private fun getDismissalCount(): Int {
         // using SharedPreferences:
-        val context = applicationContext ?: return 0
+        val context = getApplication<Application>()
         val sharedPreferences = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         return sharedPreferences.getInt("dismissal_count", 0)
     }
 
     // Save the dismissal count to SharedPreferences or DataStore
     private fun saveDismissalCount(count: Int) {
-        val context = applicationContext ?: return
+        val context = getApplication<Application>()
         val sharedPreferences = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-        sharedPreferences.edit() { putInt("dismissal_count", count) }
+        sharedPreferences.edit { putInt("dismissal_count", count) }
     }
 
     //for a feature
-    fun useFeatureRequiringPermission(context: Context): Boolean {
+    fun useFeatureRequiringPermission(): Boolean {
         if (!_hasNotificationAccess.value) {
             _showPermissionDialog.value = true
             return false
@@ -154,14 +157,17 @@ class MainViewModel : ViewModel() {
     }
 
     // for battery optimization
-    fun checkBatteryOptimization(context: Context): Boolean {
+    fun checkBatteryOptimization(): Boolean {
+        val context = getApplication<Application>()
+
         val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
         return powerManager.isIgnoringBatteryOptimizations(context.packageName)
     }
 
-    fun requestBatteryOptimizationExemption(context: Context) {
+    fun requestBatteryOptimizationExemption() {
+        val context = getApplication<Application>()
         val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
-            data = Uri.parse("package: ${context.packageName}")
+            data = "package: ${context.packageName}".toUri()
         }
         context.startActivity(intent)
     }

@@ -98,7 +98,7 @@ val appModule = module {
      * - MainViewModel: Handles app-wide state and notification permissions
      */
     viewModel {
-        MainViewModel()
+        MainViewModel(get())
     }
 
     /**

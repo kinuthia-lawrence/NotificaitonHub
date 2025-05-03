@@ -21,6 +21,9 @@ fun DashboardScreen(
     val nestedNavController = rememberNavController()
 
     Scaffold(
+        topBar = {
+            DashboardTopAppBar()
+        },
         bottomBar = {
             BottomNavigation(nestedNavController)
         }

@@ -44,6 +44,9 @@ koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose" }
 koin-androidx-navigation = { module = "io.insert-koin:koin-androidx-navigation" }
 #coil
 coil-kt-coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilComposeVersion" }
+#Icons
+androidx-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
+
 
 
 [plugins]
