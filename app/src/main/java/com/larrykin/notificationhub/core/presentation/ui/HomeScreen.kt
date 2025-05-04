@@ -90,7 +90,7 @@ fun HomeScreen(navController: NavController, viewModel: MainViewModel) {
                     AppListItem(
                         appInfoDetails = app,
                         onClick = {
-                            navController.navigate("appDetails/${app.name}")
+                            navController.navigate("appDetails/${app.packageName}")
                         }
                     )
 

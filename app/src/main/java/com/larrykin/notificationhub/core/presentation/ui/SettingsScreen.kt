@@ -1,46 +1,57 @@
 package com.larrykin.notificationhub.core.presentation.ui
 
-import android.content.Intent
-import android.provider.Settings
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavController
-import com.larrykin.notificationhub.core.presentation.viewModels.MainViewModel
+import com.larrykin.notificationhub.core.presentation.components.ComingSoonScreen
+import com.larrykin.notificationhub.core.presentation.viewModels.SettingsViewModel
+import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun SettingsScreen(navController: NavController) {
-
-}
-
-// This function is used to display the settings screen for the app.
-@Composable
-fun AppSettings(viewModel: MainViewModel, startActivity: (Intent) -> Unit) {
-    val hasAccess by viewModel.hasNotificationAccess.collectAsState()
-
-    SettingsItem(
-        title = "Notification Access",
-        description = if (hasAccess) "Enabled" else "Disabled",
-        icon = Icons.Default.Notifications,
-        enabled = !hasAccess,
-        onClick = {
-            if (!hasAccess) {
-                startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
-            }
-        }
-    )
-}
-
-@Composable
-fun SettingsItem(
-    title: String,
-    description: String,
-    icon: ImageVector,
-    enabled: Boolean,
-    onClick: () -> Unit
-) {
-    TODO("Not yet implemented")
+    val viewModel: SettingsViewModel = getViewModel()
+    ComingSoonScreen()
+//    LazyColumn {
+//        item {
+//            SettingsHeader("Notification Access")
+//            NotificationAccessSetting(
+//                hasAccess = viewModel.hasNotificationAccess,
+//                onClick = { viewModel.requestNotificationAccess() }
+//            )
+//        }
+//
+//        item {
+//            SettingsHeader("Global Settings")
+//            SwitchSetting(
+//                title = "Enable All Notifications",
+//                checked = viewModel.globalNotificationsEnabled,
+//                onCheckedChange = { viewModel.setGlobalNotificationsEnabled(it) }
+//            )
+//
+//            SliderSetting(
+//                title = "Default Volume",
+//                value = viewModel.defaultVolume,
+//                onValueChange = { viewModel.setDefaultVolume(it) },
+//                range = 0f..100f
+//            )
+//
+//            DropdownSetting(
+//                title = "Default Priority",
+//                selected = viewModel.defaultPriority,
+//                options = (0..5).toList(),
+//                onSelect = { viewModel.setDefaultPriority(it) }
+//            )
+//
+//            SwitchSetting(
+//                title = "Bypass DND by Default",
+//                checked = viewModel.defaultBypassDnd,
+//                onCheckedChange = { viewModel.setDefaultBypassDnd(it) }
+//            )
+//        }
+//
+//        item {
+//            SettingsHeader("App Theme")
+//            // Theme settings
+//        }
+//    }
 }

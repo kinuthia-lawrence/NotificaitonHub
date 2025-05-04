@@ -10,6 +10,7 @@ import androidx.core.content.edit
 import androidx.core.net.toUri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.larrykin.notificationhub.core.data.entities.NotificationProfile
 import com.larrykin.notificationhub.core.domain.model.AppInfoDetails
 import com.larrykin.notificationhub.core.domain.repository.INotificationRepository
 import kotlinx.coroutines.delay
@@ -153,6 +154,154 @@ class MainViewModel(application: Application) : KoinComponent,
         sharedPreferences.edit { putInt("dismissal_count", count) }
     }
 
+    //! FOR Updating App Details
+    fun setNotificationEnabled(packageName: String, enabled: Boolean) {
+        viewModelScope.launch {
+            repository.getAppSettings(packageName)?.let { currentSettings ->
+                val updatedSettings = currentSettings.copy(isEnabled = enabled)
+                repository.saveAppSettings(updatedSettings)
+                _installedApps.value = _installedApps.value.map { app ->
+                    if (app.packageName == packageName) {
+                        app.copy(notificationsEnabled = enabled)
+                    } else {
+                        app
+                    }
+                }
+            }
+        }
+    }
+
+    fun setSoundEnabled(packageName: String, enabled: Boolean) {
+        viewModelScope.launch {
+            repository.getAppSettings(packageName)?.let { currentSettings ->
+                val updatedSettings =
+                    currentSettings.copy(isEnabled = enabled) // Changed to soundEnabled
+                repository.saveAppSettings(updatedSettings)
+                _installedApps.value = _installedApps.value.map { app ->
+                    if (app.packageName == packageName) {
+                        app.copy(soundEnabled = enabled) // Update correct property
+                    } else {
+                        app
+                    }
+                }
+            }
+        }
+    }
+
+    fun setVolumeLevel(packageName: String, level: Int) {
+        viewModelScope.launch {
+            repository.getAppSettings(packageName)?.let { currentSettings ->
+                val updatedSettings = currentSettings.copy(volumeLevel = level)
+                repository.saveAppSettings(updatedSettings)
+                _installedApps.value = _installedApps.value.map { app ->
+                    if (app.packageName == packageName) {
+                        app.copy(volumeLevel = level)
+                    } else {
+                        app
+                    }
+                }
+            }
+        }
+    }
+
+    fun setCustomRingtone(packageName: String, path: String?) {
+        viewModelScope.launch {
+            repository.getAppSettings(packageName)?.let { currentSettings ->
+                val updatedSettings = currentSettings.copy(customRingtonePath = path)
+                repository.saveAppSettings(updatedSettings)
+                _installedApps.value = _installedApps.value.map { app ->
+                    if (app.packageName == packageName) {
+                        app.copy(customRingtonePath = path)
+                    } else {
+                        app
+                    }
+                }
+            }
+        }
+    }
+
+    fun setVibrationPattern(packageName: String, pattern: String?) {
+        viewModelScope.launch {
+            repository.getAppSettings(packageName)?.let { currentSettings ->
+                val updatedSettings = currentSettings.copy(vibrationPattern = pattern)
+                repository.saveAppSettings(updatedSettings)
+                _installedApps.value = _installedApps.value.map { app ->
+                    if (app.packageName == packageName) {
+                        app.copy(vibrationPattern = pattern)
+                    } else {
+                        app
+                    }
+                }
+            }
+        }
+    }
+
+    fun setLedColor(packageName: String, color: Int?) {
+        viewModelScope.launch {
+            repository.getAppSettings(packageName)?.let { currentSettings ->
+                val updatedSettings = currentSettings.copy(ledColor = color)
+                repository.saveAppSettings(updatedSettings)
+                _installedApps.value = _installedApps.value.map { app ->
+                    if (app.packageName == packageName) {
+                        app.copy(ledColor = color)
+                    } else {
+                        app
+                    }
+                }
+            }
+        }
+    }
+
+    fun setBypassDnD(packageName: String, bypass: Boolean) {
+        viewModelScope.launch {
+            repository.getAppSettings(packageName)?.let { currentSettings ->
+                val updatedSettings = currentSettings.copy(bypassDnD = bypass)
+                repository.saveAppSettings(updatedSettings)
+                _installedApps.value = _installedApps.value.map { app ->
+                    if (app.packageName == packageName) {
+                        app.copy(bypassDnD = bypass)
+                    } else {
+                        app
+                    }
+                }
+            }
+        }
+    }
+
+    fun setPriority(packageName: String, priority: Int) {
+        viewModelScope.launch {
+            repository.getAppSettings(packageName)?.let { currentSettings ->
+                val updatedSettings = currentSettings.copy(priority = priority)
+                repository.saveAppSettings(updatedSettings)
+                _installedApps.value = _installedApps.value.map { app ->
+                    if (app.packageName == packageName) {
+                        app.copy(priority = priority)
+                    } else {
+                        app
+                    }
+                }
+            }
+        }
+    }
+
+    val availableProfiles = MutableStateFlow<List<NotificationProfile>>(emptyList())
+
+    fun setProfile(packageName: String, profileId: Long?) {
+        viewModelScope.launch {
+            repository.getAppSettings(packageName)?.let { currentSettings ->
+                val updatedSettings = currentSettings.copy(notificationProfileId = profileId)
+                repository.saveAppSettings(updatedSettings)
+                _installedApps.value = _installedApps.value.map { app ->
+                    if (app.packageName == packageName) {
+                        app.copy(notificationProfileId = profileId)
+                    } else {
+                        app
+                    }
+                }
+            }
+        }
+    }
+
     //for a feature
     fun useFeatureRequiringPermission(): Boolean {
         if (!_hasNotificationAccess.value) {
@@ -177,4 +326,5 @@ class MainViewModel(application: Application) : KoinComponent,
         }
         context.startActivity(intent)
     }
+
 }

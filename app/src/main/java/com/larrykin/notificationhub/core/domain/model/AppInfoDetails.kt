@@ -7,5 +7,12 @@ data class AppInfoDetails(
     val packageName: String = "",
     val iconUri: Uri? = null,
     val notificationsEnabled: Boolean = false,
-    val soundEnabled: Boolean = true
+    val soundEnabled: Boolean = false,
+    val volumeLevel: Int = 50,
+    val customRingtonePath: String? = null,
+    val vibrationPattern: String? = null,
+    val ledColor: Int? = null,
+    val bypassDnD: Boolean = false,
+    val priority: Int = 3,
+    val notificationProfileId: Long? = null
 )

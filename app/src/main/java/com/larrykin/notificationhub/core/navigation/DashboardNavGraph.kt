@@ -33,7 +33,7 @@ fun DashboardNavGraph(
             HistoryScreen(mainNavController)
         }
         composable("analytics") {
-            AnalyticsScreen(mainNavController)
+            AnalyticsScreen()
         }
     }
 }

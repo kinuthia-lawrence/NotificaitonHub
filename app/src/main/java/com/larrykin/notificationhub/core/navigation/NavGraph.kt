@@ -13,9 +13,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.larrykin.notificationhub.core.presentation.ui.AppDetailScreen
 import com.larrykin.notificationhub.core.presentation.ui.DashboardScreen
-import com.larrykin.notificationhub.core.presentation.ui.HistoryScreen
-import com.larrykin.notificationhub.core.presentation.ui.HomeScreen
-import com.larrykin.notificationhub.core.presentation.ui.ProfilesScreen
 import com.larrykin.notificationhub.core.presentation.ui.SettingsScreen
 import com.larrykin.notificationhub.core.presentation.ui.SplashScreen
 import com.larrykin.notificationhub.core.presentation.viewModels.MainViewModel

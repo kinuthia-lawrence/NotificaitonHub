@@ -8,8 +8,10 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.larrykin.notificationhub.core.data.database.AppDatabase
 import com.larrykin.notificationhub.core.data.repository.NotificationRepository
 import com.larrykin.notificationhub.core.domain.repository.INotificationRepository
-import com.larrykin.notificationhub.core.presentation.viewModels.AppDetailViewModel
+import com.larrykin.notificationhub.core.presentation.viewModels.AnalyticsViewModel
 import com.larrykin.notificationhub.core.presentation.viewModels.MainViewModel
+import com.larrykin.notificationhub.core.presentation.viewModels.ProfileViewModel
+import com.larrykin.notificationhub.core.presentation.viewModels.SettingsViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -33,11 +35,11 @@ val appModule = module {
     /**
      * Migrations for Room database.
      * */
-/*    val MIGRATION_1_2 = object : Migration(1, 2) {
-        override fun migrate(db: SupportSQLiteDatabase) {
-                 db.execSQL("ALTER TABLE notification_profiles ADD COLUMN isEnabled INTEGER NOT NULL DEFAULT 1")
-        }
-    }*/
+    /*    val MIGRATION_1_2 = object : Migration(1, 2) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                     db.execSQL("ALTER TABLE notification_profiles ADD COLUMN isEnabled INTEGER NOT NULL DEFAULT 1")
+            }
+        }*/
 
 
     //? DATABASE
@@ -102,15 +104,24 @@ val appModule = module {
     }
 
     /**
-     * - AppDetailViewModel: Manages settings for individual apps
-     * @param packageName: The package name of the app whose settings are being managed.
-     * @param repository: The repository used to access app settings and notifications.
-     */
-    viewModel { parameters ->
-        AppDetailViewModel(
-            packageName = parameters.get(),
-            repository = get()
-        )
+     * -ProfileViewModel: Manages notification profiles
+     * */
+    viewModel {
+        ProfileViewModel()
+    }
+
+    /**
+     * -Analytics: Manages analytics data and reports
+     * */
+    viewModel {
+        AnalyticsViewModel()
+    }
+
+    /**
+     * -Settings: Maanages app settings
+     * */
+    viewModel {
+        SettingsViewModel()
     }
 
 }
