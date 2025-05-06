@@ -16,12 +16,12 @@ import androidx.room.PrimaryKey
 data class AppNotificationSettings(
     @PrimaryKey val packageName: String,
     val appName: String,
-    val volumeLevel: Int, //0-100
+    val volumeLevel: Int = 100, //0-100
     val customRingtonePath: String?,
     val vibrationPattern: String?, //Stored as comma-separated values
     val ledColor: Int?,
-    val bypassDnD: Boolean,
-    val priority: Int, // 0-5
-    val isEnabled: Boolean,
+    val bypassDnD: Boolean = false,
+    val priority: Int = 5, // 0-5
+    val soundEnabled: Boolean = false,
     val notificationProfileId: Long?
 )

@@ -6,7 +6,9 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.larrykin.notificationhub.core.data.database.AppDatabase
+import com.larrykin.notificationhub.core.data.repository.AppRepository
 import com.larrykin.notificationhub.core.data.repository.NotificationRepository
+import com.larrykin.notificationhub.core.domain.repository.IAppRepository
 import com.larrykin.notificationhub.core.domain.repository.INotificationRepository
 import com.larrykin.notificationhub.core.presentation.viewModels.AnalyticsViewModel
 import com.larrykin.notificationhub.core.presentation.viewModels.MainViewModel
@@ -82,6 +84,12 @@ val appModule = module {
      */
     single { get<AppDatabase>().notificationHistoryDao() }
 
+    /**
+     * Provides a singleton instance of ProfileDao.
+     *
+     * @return DAO for accessing notification profiles.
+     */
+single { get<AppDatabase>().profileDao() }
 
     //? REPOSITORIES
 
@@ -92,6 +100,11 @@ val appModule = module {
      * @return Repository responsible for managing notification data operations.
      */
     single<INotificationRepository> { NotificationRepository(get(), get()) }
+
+    /**
+     * AppRepository: Provides a singleton instance of the repository for accessing app-wide data.
+     * */
+    single<IAppRepository> { AppRepository(get(), get()) }
 
 
     //? VIEW MODELS
@@ -107,7 +120,7 @@ val appModule = module {
      * -ProfileViewModel: Manages notification profiles
      * */
     viewModel {
-        ProfileViewModel()
+        ProfileViewModel(get(), get())
     }
 
     /**

@@ -25,6 +25,7 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -61,6 +62,9 @@ fun AppDetailScreen(
         app.packageName.equals(packageName, ignoreCase = true)
     } ?: AppInfoDetails()
 
+    LaunchedEffect(packageName) {
+        viewModel.initializeAppSettings(packageName, appInfo.name)
+    }
 
     Column(
         modifier = Modifier
@@ -95,7 +99,7 @@ fun AppDetailScreen(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
         ) {
-            // App header card
+            //* App header card
             item {
                 androidx.compose.material3.Card(
                     modifier = Modifier
@@ -129,7 +133,7 @@ fun AppDetailScreen(
                 }
             }
 
-            // Basic Settings section
+            //* Basic Settings section
             item {
                 SettingsSection(title = "Basic Settings") {
                     SwitchSetting(
@@ -146,20 +150,28 @@ fun AppDetailScreen(
                 }
             }
 
-            // Sound & Vibration section
+            //* Sound & Vibration section
             item {
                 SettingsSection(title = "Sound & Vibration") {
+                    SwitchSetting(
+                        title = "Enable Sound",
+                        checked = appInfo.soundEnabled,
+                        onCheckedChange = { viewModel.setSoundEnabled(packageName, it) }
+                    )
+
                     SliderSetting(
                         title = "Volume Level",
                         value = appInfo.volumeLevel.toFloat(),
                         onValueChange = { viewModel.setVolumeLevel(packageName, it.toInt()) },
-                        range = 0f..100f
+                        range = 0f..100f,
+                        enabled = appInfo.soundEnabled // Only enable if sound is enabled
                     )
 
                     RingtoneSetting(
                         title = "Custom Sound",
                         selected = appInfo.customRingtonePath,
-                        onSelect = { viewModel.setCustomRingtone(packageName, it) }
+                        onSelect = { viewModel.setCustomRingtone(packageName, it) },
+                        enabled = appInfo.soundEnabled // Only enable if sound is enabled
                     )
 
                     VibrationSetting(
@@ -267,15 +279,22 @@ fun SliderSetting(
     title: String,
     value: Float,
     onValueChange: (Float) -> Unit,
-    range: ClosedFloatingPointRange<Float>
+    range: ClosedFloatingPointRange<Float>,
+    enabled: Boolean = true
 ) {
     Column(modifier = Modifier.padding(vertical = 8.dp)) {
-        Text(text = title, style = MaterialTheme.typography.bodyLarge)
+        Text(
+            text = title,
+            style = MaterialTheme.typography.bodyLarge,
+            color = if (enabled) MaterialTheme.colorScheme.onSurface
+            else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+        )
         Slider(
             value = value,
             onValueChange = onValueChange,
             valueRange = range,
-            modifier = Modifier.padding(top = 8.dp)
+            modifier = Modifier.padding(top = 8.dp),
+            enabled = enabled
         )
     }
 }
@@ -321,17 +340,24 @@ fun DropdownSetting(
 fun RingtoneSetting(
     title: String,
     selected: String?,
-    onSelect: (String?) -> Unit
+    onSelect: (String?) -> Unit,
+    enabled: Boolean = true
 ) {
     var expanded by remember { mutableStateOf(false) }
     val ringtones = listOf("Default", "Chime", "Chirp", "Ding", "None")
 
     Column(modifier = Modifier.padding(vertical = 8.dp)) {
-        Text(text = title, style = MaterialTheme.typography.bodyLarge)
+        Text(
+            text = title,
+            style = MaterialTheme.typography.bodyLarge,
+            color = if (enabled) MaterialTheme.colorScheme.onSurface
+            else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.038f)
+        )
         Box {
             OutlinedButton(
                 onClick = { expanded = true },
-                modifier = Modifier.padding(top = 4.dp)
+                modifier = Modifier.padding(top = 4.dp),
+                enabled = enabled
             ) {
                 Text(selected ?: "Default Sound")
             }

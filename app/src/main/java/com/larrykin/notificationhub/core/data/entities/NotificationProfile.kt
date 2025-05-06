@@ -8,14 +8,13 @@ import androidx.room.PrimaryKey
  * Entity representing a notification profile.
  *
  * */
-@Entity(
-    tableName = "notification_profile"
-)
+@Entity(tableName = "notification_profiles")
 data class NotificationProfile(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val name: String,
-    val isActive: Boolean,
-    val activationStartTime: Long?,  // for scheduled profiles
-    val activationEndTime: Long?,
-    val activationDays: String?  //Stored as comma-separated day numbers
+    val isDefault: Boolean = false,
+    val description: String?,
+    val createdAt: Long = System.currentTimeMillis(),
+    val iconResId: Int?,
+    val color: Int?
 )

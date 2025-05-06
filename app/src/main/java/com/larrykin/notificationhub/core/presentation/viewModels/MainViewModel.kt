@@ -10,6 +10,7 @@ import androidx.core.content.edit
 import androidx.core.net.toUri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.larrykin.notificationhub.core.data.entities.AppNotificationSettings
 import com.larrykin.notificationhub.core.data.entities.NotificationProfile
 import com.larrykin.notificationhub.core.domain.model.AppInfoDetails
 import com.larrykin.notificationhub.core.domain.repository.INotificationRepository
@@ -155,10 +156,32 @@ class MainViewModel(application: Application) : KoinComponent,
     }
 
     //! FOR Updating App Details
+    // Add this to MainViewModel
+    fun initializeAppSettings(packageName: String, appName: String) {
+        viewModelScope.launch {
+            val existingSettings = repository.getAppSettings(packageName)
+            if (existingSettings == null) {
+                // Create default settings for this app
+                val defaultSettings = AppNotificationSettings(
+                    packageName = packageName,
+                    appName = appName,
+                    volumeLevel = 50,
+                    customRingtonePath = null,
+                    vibrationPattern = null,
+                    ledColor = null,
+                    bypassDnD = false,
+                    priority = 3,
+                    soundEnabled = true,
+                    notificationProfileId = null
+                )
+                repository.saveAppSettings(defaultSettings)
+            }
+        }
+    }
     fun setNotificationEnabled(packageName: String, enabled: Boolean) {
         viewModelScope.launch {
             repository.getAppSettings(packageName)?.let { currentSettings ->
-                val updatedSettings = currentSettings.copy(isEnabled = enabled)
+                val updatedSettings = currentSettings.copy(soundEnabled = enabled)
                 repository.saveAppSettings(updatedSettings)
                 _installedApps.value = _installedApps.value.map { app ->
                     if (app.packageName == packageName) {
@@ -174,12 +197,11 @@ class MainViewModel(application: Application) : KoinComponent,
     fun setSoundEnabled(packageName: String, enabled: Boolean) {
         viewModelScope.launch {
             repository.getAppSettings(packageName)?.let { currentSettings ->
-                val updatedSettings =
-                    currentSettings.copy(isEnabled = enabled) // Changed to soundEnabled
+                val updatedSettings = currentSettings.copy(soundEnabled = enabled)
                 repository.saveAppSettings(updatedSettings)
                 _installedApps.value = _installedApps.value.map { app ->
                     if (app.packageName == packageName) {
-                        app.copy(soundEnabled = enabled) // Update correct property
+                        app.copy(soundEnabled = enabled)
                     } else {
                         app
                     }
